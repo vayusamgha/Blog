@@ -12,7 +12,7 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="伐由伽蓝 — 技术、数学与思考" />
     <title>{title ? `${title} — 伐由伽蓝` : "伐由伽蓝"}</title>
-    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="icon" href={`${base}/image.png`} type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -24,7 +24,6 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
       href="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.css"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href={`${base}/pagefind/pagefind-ui.css`} />
   </head>
   <body class="min-h-screen flex flex-col">
     <header class="border-b border-border bg-surface/80 backdrop-blur-sm sticky top-0 z-10">
@@ -52,16 +51,20 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
       </nav>
     </header>
 
-    <!-- Search dialog -->
-    <dialog id="search-dialog" class="search-dialog rounded-2xl shadow-2xl p-6 w-full max-w-xl mt-20 bg-surface backdrop:bg-black/30">
-      <div class="flex items-center justify-between mb-4">
-        <span class="text-sm font-medium text-text-muted">搜索笔记</span>
-        <button id="search-close" class="text-text-muted hover:text-text transition-colors cursor-pointer" aria-label="关闭">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-        </button>
+    <!-- Search overlay -->
+    <div id="search-overlay" class="fixed inset-0 z-50 hidden" style="background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);">
+      <div class="max-w-xl mx-auto mt-24 px-5">
+        <div class="bg-surface rounded-2xl shadow-2xl border border-border p-5">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm font-medium text-text-muted">搜索笔记</span>
+            <button id="search-close" class="text-text-muted hover:text-text transition-colors cursor-pointer" aria-label="关闭">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+          </div>
+          <div id="search"></div>
+        </div>
       </div>
-      <div id="search"></div>
-    </dialog>
+    </div>
 
     <main class="flex-1">
       <slot />
@@ -70,50 +73,68 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
       <p>&copy; {new Date().getFullYear()} &mdash; Built with Astro &amp; KaTeX</p>
     </footer>
 
+    <link rel="stylesheet" href={`${base}/pagefind/pagefind-ui.css`} />
     <script src={`${base}/pagefind/pagefind-ui.js`}></script>
     <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        const dialog = document.getElementById("search-dialog");
+      (function() {
+        const overlay = document.getElementById("search-overlay");
         const toggle = document.getElementById("search-toggle");
         const close = document.getElementById("search-close");
         const container = document.getElementById("search");
-
         let instance = null;
 
-        toggle.addEventListener("click", () => {
-          dialog.showModal();
-          if (!instance) {
-            instance = new PagefindUI({
-              element: "#search",
-              baseUrl: `${base}/pagefind/`,
-              showImages: false,
-              showSubResults: true,
-              resetStyles: false,
-            });
-          }
-        });
+        function openSearch() {
+          overlay.classList.remove("hidden");
+          document.body.style.overflow = "hidden";
 
-        close.addEventListener("click", () => dialog.close());
-        dialog.addEventListener("click", (e) => {
-          if (e.target === dialog) dialog.close();
-        });
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape" && dialog.open) dialog.close();
-          if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-            e.preventDefault();
-            dialog.showModal();
-            if (!instance) {
+          if (!instance) {
+            // Defer init to next tick so the container is visible
+            requestAnimationFrame(() => {
               instance = new PagefindUI({
                 element: "#search",
                 baseUrl: `${base}/pagefind/`,
                 showImages: false,
-                showSubResults: true,
-                resetStyles: false,
+                resetStyles: true,
               });
+              // Auto-focus the input after Pagefind renders it
+              setTimeout(() => {
+                const input = container.querySelector("input");
+                if (input) input.focus();
+              }, 200);
+            });
+          } else {
+            setTimeout(() => {
+              const input = container.querySelector("input");
+              if (input) input.focus();
+            }, 100);
+          }
+        }
+
+        function closeSearch() {
+          overlay.classList.add("hidden");
+          document.body.style.overflow = "";
+        }
+
+        toggle.addEventListener("click", openSearch);
+
+        close.addEventListener("click", closeSearch);
+
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) closeSearch();
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            if (!overlay.classList.contains("hidden")) {
+              closeSearch();
             }
           }
+          if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+            e.preventDefault();
+            openSearch();
+          }
         });
-      });
+      })();
     </script>
   </body>
 </html>

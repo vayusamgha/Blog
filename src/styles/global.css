@@ -92,6 +92,14 @@ article.prose a:hover {
   font-family: var(--font-sans) !important;
   padding: 0.75rem 1rem !important;
   font-size: 1rem !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 0.75rem !important;
+  background: var(--color-bg) !important;
+}
+
+.pagefind-ui__search-input:focus {
+  outline: 2px solid var(--color-accent) !important;
+  outline-offset: -2px;
 }
 
 .pagefind-ui__result-title {
@@ -102,12 +110,12 @@ article.prose a:hover {
   font-family: var(--font-serif);
 }
 
-/* ---------- Search dialog ---------- */
-.search-dialog {
-  border: 1px solid var(--color-border);
+/* ---------- Search overlay ---------- */
+#search-overlay {
+  animation: fadeIn 0.15s ease;
 }
 
-.search-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(4px);
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
