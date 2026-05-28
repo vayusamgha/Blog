@@ -1,8 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../components/BaseLayout.astro";
+import Sidebar from "../../components/Sidebar.astro";
 import PostList from "../../components/PostList.astro";
-import { getPosts, filterByTag } from "../../utils/posts";
+import { getPosts, getTags, getStats, getArchives, getRecentPosts, filterByTag } from "../../utils/posts";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -21,21 +22,28 @@ export async function getStaticPaths() {
 const { tag } = Astro.props;
 const allPosts = await getPosts();
 const filteredPosts = filterByTag(allPosts, tag);
-const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
+const allTags = getTags(allPosts);
+const stats = await getStats();
+const archives = await getArchives();
+const recentPosts = await getRecentPosts(5);
 ---
 
 <BaseLayout title={`#${tag}`}>
-  <div class="max-w-4xl mx-auto px-5 py-10">
-    <a
-      href={base}
-      class="text-sm text-text-muted hover:text-accent transition-colors mb-4 inline-block"
-    >
-      ← 返回
-    </a>
-    <div class="mb-10">
-      <h1 class="text-3xl font-bold text-text mb-2">#{tag}</h1>
-      <p class="text-text-muted text-sm">{filteredPosts.length} 篇笔记</p>
+  <div class="max-w-6xl mx-auto px-5 py-10">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <div class="w-full lg:w-72 shrink-0 order-2 lg:order-1">
+        <Sidebar posts={allPosts} tags={allTags} {stats} {archives} {recentPosts} />
+      </div>
+      <div class="flex-1 min-w-0 order-1 lg:order-2">
+        <a
+          href={import.meta.env.BASE_URL}
+          class="text-sm text-text-muted hover:text-accent transition-colors mb-4 inline-block"
+        >
+          ← 返回
+        </a>
+        <h2 class="text-2xl font-bold text-text mb-6">#{tag} <span class="text-text-muted text-lg font-normal">({filteredPosts.length})</span></h2>
+        <PostList posts={allPosts} activeTag={tag} />
+      </div>
     </div>
-    <PostList posts={allPosts} activeTag={tag} />
   </div>
 </BaseLayout>

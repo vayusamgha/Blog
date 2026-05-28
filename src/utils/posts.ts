@@ -25,3 +25,28 @@ export function filterByTag(
 ) {
   return posts.filter((p) => p.data.tags.includes(tag));
 }
+
+export async function getStats() {
+  const posts = await getPosts();
+  const count = posts.length;
+  if (count === 0) return { count: 0, runningDays: 0 };
+  const timestamps = posts.map((p) => p.data.date.getTime());
+  const firstDate = new Date(Math.min(...timestamps));
+  const runningDays = Math.max(1, Math.ceil((Date.now() - firstDate.getTime()) / (1000 * 60 * 60 * 24)));
+  return { count, runningDays };
+}
+
+export async function getArchives() {
+  const posts = await getPosts();
+  const map = new Map<string, number>();
+  for (const post of posts) {
+    const key = post.data.date.toLocaleDateString("zh-CN", { year: "numeric", month: "long" });
+    map.set(key, (map.get(key) || 0) + 1);
+  }
+  return [...map.entries()];
+}
+
+export async function getRecentPosts(limit = 5) {
+  const posts = await getPosts();
+  return posts.slice(0, limit);
+}

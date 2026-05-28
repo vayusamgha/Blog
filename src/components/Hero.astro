@@ -1,0 +1,39 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+
+const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
+
+// Random hero image from public/head_image/
+let heroImage = "";
+try {
+  const dir = path.join(process.cwd(), "public", "head_image");
+  const files = fs.readdirSync(dir).filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f));
+  if (files.length > 0) {
+    const pick = files[Math.floor(Math.random() * files.length)];
+    heroImage = `${base}/head_image/${pick}`;
+  }
+} catch {}
+---
+
+<div
+  class="relative w-full h-72 sm:h-80 lg:h-96 flex items-center justify-center overflow-hidden rounded-b-[2rem]"
+>
+  {
+    heroImage ? (
+      <img
+        src={heroImage}
+        alt=""
+        class="absolute inset-0 w-full h-full object-cover"
+      />
+    ) : (
+      <div class="absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-900"></div>
+    )
+  }
+  <!-- Overlay -->
+  <div class="absolute inset-0 bg-black/30"></div>
+  <!-- Text -->
+  <h1 class="relative z-10 text-4xl sm:text-5xl lg:text-6xl font-bold text-white text-center px-5" style="text-shadow: 0 2px 12px rgba(0,0,0,0.5);">
+    Blog - VayuSamgha
+  </h1>
+</div>

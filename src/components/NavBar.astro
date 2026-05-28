@@ -1,0 +1,18 @@
+---
+const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
+---
+
+<nav class="flex items-center gap-1 text-sm">
+  <button
+    id="search-toggle"
+    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-text-muted hover:text-text hover:bg-bg transition-colors cursor-pointer"
+    aria-label="搜索"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <span>搜索</span>
+  </button>
+  <a href={base} class="px-3 py-1.5 rounded-lg text-text-muted hover:text-text hover:bg-bg transition-colors">主页</a>
+  <a href={`${base}/archives`} class="px-3 py-1.5 rounded-lg text-text-muted hover:text-text hover:bg-bg transition-colors">归档</a>
+  <a href={`${base}/tags`} class="px-3 py-1.5 rounded-lg text-text-muted hover:text-text hover:bg-bg transition-colors">标签</a>
+  <a href={`${base}/about`} class="px-3 py-1.5 rounded-lg text-text-muted hover:text-text hover:bg-bg transition-colors">关于</a>
+</nav>

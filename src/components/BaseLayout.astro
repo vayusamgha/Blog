@@ -1,7 +1,15 @@
 ---
 import "../styles/global.css";
+import NavBar from "./NavBar.astro";
+import Hero from "./Hero.astro";
+import Footer from "./Footer.astro";
 
-const { title } = Astro.props;
+interface Props {
+  title?: string;
+  showHero?: boolean;
+}
+
+const { title, showHero = false } = Astro.props;
 const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
 ---
 
@@ -25,31 +33,19 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
       crossorigin="anonymous"
     />
   </head>
-  <body class="min-h-screen flex flex-col">
-    <header class="border-b border-border bg-surface/80 backdrop-blur-sm sticky top-0 z-10">
-      <nav class="max-w-4xl mx-auto px-5 h-14 flex items-center justify-between">
-        <div class="flex items-center gap-6">
-          <a href={base} class="flex items-center gap-2.5 text-lg font-semibold tracking-tight text-text hover:text-accent transition-colors">
-            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-accent/10 text-accent text-base font-bold">
-              &sum;
-            </span>
-            伐由伽蓝
-          </a>
-        </div>
-        <div class="flex items-center gap-4 text-sm text-text-muted">
-          <button
-            id="search-toggle"
-            class="hover:text-text transition-colors cursor-pointer flex items-center gap-1"
-            aria-label="搜索"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <span class="hidden sm:inline">搜索</span>
-          </button>
-          <a href={`${base}/tags`} class="hover:text-text transition-colors">标签</a>
-          <a href={`${base}/rss.xml`} class="hover:text-text transition-colors">RSS</a>
-        </div>
-      </nav>
+  <body class="min-h-screen flex flex-col bg-bg">
+    <!-- Top nav bar -->
+    <header class="sticky top-0 z-20 bg-surface/80 backdrop-blur-sm border-b border-border">
+      <div class="max-w-6xl mx-auto px-5 h-12 flex items-center justify-between">
+        <a href={base} class="text-base font-semibold text-text hover:text-accent transition-colors shrink-0 mr-6">
+          伐由伽蓝
+        </a>
+        <NavBar />
+      </div>
     </header>
+
+    <!-- Hero (only on home page) -->
+    {showHero && <Hero />}
 
     <!-- Search overlay -->
     <div id="search-overlay" data-base={base} class="fixed inset-0 z-50 hidden" style="background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);">
@@ -66,7 +62,7 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
             />
           </div>
           <div id="search-results" class="max-h-80 overflow-y-auto"></div>
-          <div id="search-empty" class="hidden text-center text-sm text-text-muted py-8">
+          <div id="search-empty" class="text-center text-sm text-text-muted py-8">
             输入关键词搜索笔记
           </div>
         </div>
@@ -76,9 +72,8 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
     <main class="flex-1">
       <slot />
     </main>
-    <footer class="border-t border-border py-8 text-center text-sm text-text-muted">
-      <p>&copy; {new Date().getFullYear()} &mdash; Built with Astro &amp; KaTeX</p>
-    </footer>
+
+    <Footer />
 
     <script src={`${base}/pagefind/pagefind.js`}></script>
     <script is:inline>
@@ -111,23 +106,25 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
           input.value = "";
           results.innerHTML = "";
           empty.classList.remove("hidden");
+          empty.style.display = "";
         }
 
         async function doSearch(query) {
           if (!pagefind || !query.trim()) {
             results.innerHTML = "";
             empty.classList.remove("hidden");
+            empty.style.display = "";
             return;
           }
 
           const search = await pagefind.search(query.trim());
           if (!search || search.results.length === 0) {
             results.innerHTML = '<p class="text-center text-sm text-text-muted py-4">无结果</p>';
-            empty.classList.add("hidden");
+            empty.style.display = "none";
             return;
           }
 
-          empty.classList.add("hidden");
+          empty.style.display = "none";
           const items = await Promise.all(search.results.slice(0, 8).map(async (r) => {
             const data = await r.data();
             return { ...data, id: r.id };
@@ -141,16 +138,20 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
           `).join("");
         }
 
-        toggle.addEventListener("click", openSearch);
+        if (toggle) {
+          toggle.addEventListener("click", openSearch);
+        }
 
         overlay.addEventListener("click", (e) => {
           if (e.target === overlay) closeSearch();
         });
 
-        input.addEventListener("input", () => {
-          clearTimeout(debounceTimer);
-          debounceTimer = setTimeout(() => doSearch(input.value), 200);
-        });
+        if (input) {
+          input.addEventListener("input", () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => doSearch(input.value), 200);
+          });
+        }
 
         document.addEventListener("keydown", (e) => {
           if (e.key === "Escape") {
