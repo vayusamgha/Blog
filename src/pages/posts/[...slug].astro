@@ -15,7 +15,30 @@ const { title, date, tags } = post.data;
 const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
 const { Content, headings } = await post.render();
 
-const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 4);
+// Build TOC tree: group h3/h4 under their parent h2
+interface TocItem {
+  slug: string;
+  text: string;
+  depth: number;
+  children: TocItem[];
+}
+const tocTree: TocItem[] = [];
+let stack: TocItem[] = [];
+for (const h of headings) {
+  if (h.depth < 2 || h.depth > 4) continue;
+  const item: TocItem = { slug: h.slug, text: h.text, depth: h.depth, children: [] };
+
+  while (stack.length > 0 && stack[stack.length - 1].depth >= h.depth) {
+    stack.pop();
+  }
+
+  if (stack.length === 0) {
+    tocTree.push(item);
+  } else {
+    stack[stack.length - 1].children.push(item);
+  }
+  stack.push(item);
+}
 ---
 
 <BaseLayout title={title}>
@@ -62,7 +85,7 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 4);
 
     <!-- TOC sidebar -->
     {
-      toc.length > 0 && (
+      tocTree.length > 0 && (
         <aside
           id="toc-sidebar"
           class="hidden lg:block fixed top-24 right-[max(1.5rem,calc((100vw-72rem)/2))] w-56 max-h-[calc(100vh-8rem)] overflow-y-auto"
@@ -70,19 +93,54 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 4);
           <h4 class="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">
             目录
           </h4>
-          <nav>
-            <ul class="space-y-0.5 border-l-2 border-border">
-              {toc.map((heading) => (
-                <li
-                  style={`padding-left: ${(heading.depth - 2) * 0.75 + 0.75}rem`}
-                >
+          <nav id="toc-nav">
+            <ul class="border-l-2 border-border">
+              {tocTree.map((h2) => (
+                <li class="toc-group" data-toc-group={h2.slug}>
                   <a
-                    href={`#${heading.slug}`}
-                    data-toc-link={heading.slug}
-                    class="block py-1 text-sm text-text-muted hover:text-text transition-colors border-l-2 -ml-0.5 pl-3 border-transparent"
+                    href={`#${h2.slug}`}
+                    data-toc-link={h2.slug}
+                    data-toc-depth="2"
+                    class="block py-1.5 text-sm font-medium text-text-muted hover:text-text transition-colors border-l-2 -ml-0.5 pl-3 border-transparent"
                   >
-                    {heading.text}
+                    {h2.text}
                   </a>
+                  {
+                    h2.children.length > 0 && (
+                      <ul class="toc-children hidden">
+                        {h2.children.map((h3) => (
+                          <li>
+                            <a
+                              href={`#${h3.slug}`}
+                              data-toc-link={h3.slug}
+                              data-toc-depth="3"
+                              class="block py-1 text-sm text-text-muted hover:text-text transition-colors border-l-2 -ml-0.5 pl-5 border-transparent"
+                            >
+                              {h3.text}
+                            </a>
+                            {
+                              h3.children.length > 0 && (
+                                <ul class="toc-children hidden">
+                                  {h3.children.map((h4) => (
+                                    <li>
+                                      <a
+                                        href={`#${h4.slug}`}
+                                        data-toc-link={h4.slug}
+                                        data-toc-depth="4"
+                                        class="block py-1 text-sm text-text-muted hover:text-text transition-colors border-l-2 -ml-0.5 pl-7 border-transparent"
+                                      >
+                                        {h4.text}
+                                      </a>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )
+                            }
+                          </li>
+                        ))}
+                      </ul>
+                    )
+                  }
                 </li>
               ))}
             </ul>
@@ -98,11 +156,50 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 4);
     const links = document.querySelectorAll("[data-toc-link]");
     if (links.length === 0) return;
 
-    const headings = [...document.querySelectorAll("article.prose h2, article.prose h3, article.prose h4")];
+    const articleHeadings = [...document.querySelectorAll("article.prose h2, article.prose h3, article.prose h4")];
+
+    // --- Expand/collapse based on active h2 section ---
+    const h2Headings = articleHeadings.filter((h) => h.tagName === "H2");
+    const tocGroups = document.querySelectorAll(".toc-group");
+
+    function expandGroup(h2Slug) {
+      tocGroups.forEach((group) => {
+        const children = group.querySelector(":scope > .toc-children");
+        if (!children) return;
+        if (group.dataset.tocGroup === h2Slug) {
+          children.classList.remove("hidden");
+        } else {
+          children.classList.add("hidden");
+          // Also collapse nested grandchildren
+          children.querySelectorAll(".toc-children").forEach((c) => c.classList.add("hidden"));
+        }
+      });
+    }
+
+    // --- Highlight active heading ---
+    function highlightLink(activeId) {
+      links.forEach((link) => {
+        if (link.dataset.tocLink === activeId) {
+          link.classList.add("!text-accent", "!border-accent");
+          // Expand parent h2 group if this is a child
+          const parentGroup = link.closest(".toc-group");
+          if (parentGroup) {
+            expandGroup(parentGroup.dataset.tocGroup);
+          }
+          // Expand parent h3 group if this is an h4
+          const parentLi = link.closest("li")?.parentElement?.closest("li");
+          if (parentLi) {
+            const grandChildren = parentLi.querySelector(":scope > .toc-children");
+            if (grandChildren) grandChildren.classList.remove("hidden");
+          }
+        } else {
+          link.classList.remove("!text-accent", "!border-accent");
+        }
+      });
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find the topmost visible heading
         let activeId = null;
         for (const entry of entries) {
           if (entry.isIntersecting) {
@@ -110,7 +207,6 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 4);
             break;
           }
         }
-        // Fallback: use the last heading above the viewport
         if (!activeId) {
           for (let i = entries.length - 1; i >= 0; i--) {
             if (entries[i].boundingClientRect.top < 100) {
@@ -119,18 +215,27 @@ const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 4);
             }
           }
         }
-
-        links.forEach((link) => {
-          if (link.dataset.tocLink === activeId) {
-            link.classList.add("!text-accent", "!border-accent");
-          } else {
-            link.classList.remove("!text-accent", "!border-accent");
-          }
-        });
+        if (activeId) highlightLink(activeId);
       },
       { rootMargin: "-80px 0px -60% 0px", threshold: 0 }
     );
 
-    headings.forEach((h) => observer.observe(h));
+    articleHeadings.forEach((h) => observer.observe(h));
+
+    // --- Click on h2 toggles its children ---
+    document.querySelectorAll("[data-toc-depth='2']").forEach((h2Link) => {
+      h2Link.addEventListener("click", (e) => {
+        const group = h2Link.closest(".toc-group");
+        if (!group) return;
+        const children = group.querySelector(":scope > .toc-children");
+        if (!children) return;
+        // Toggle only if clicking the already-active h2 (otherwise navigation happens first)
+        const wasHidden = children.classList.contains("hidden");
+        children.classList.toggle("hidden", !wasHidden);
+        if (!wasHidden) {
+          children.querySelectorAll(".toc-children").forEach((c) => c.classList.add("hidden"));
+        }
+      });
+    });
   })();
 </script>
