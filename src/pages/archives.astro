@@ -27,6 +27,7 @@ const monthGroups = [...grouped.entries()];
         <Sidebar {posts} {tags} {stats} {archives} {recentPosts} />
       </div>
       <div class="flex-1 min-w-0 order-1 lg:order-2">
+        <article class="prose prose-neutral max-w-none">
         <h1>归档</h1>
         {
           monthGroups.map(([month, monthPosts]) => (
@@ -53,6 +54,7 @@ const monthGroups = [...grouped.entries()];
             </section>
           ))
         }
+        </article>
       </div>
     </div>
   </div>

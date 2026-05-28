@@ -17,6 +17,7 @@ const recentPosts = await getRecentPosts(5);
         <Sidebar {posts} {tags} {stats} {archives} {recentPosts} />
       </div>
       <div class="flex-1 min-w-0 order-1 lg:order-2">
+        <article class="prose prose-neutral max-w-none">
         <h1>所有标签</h1>
         <div class="flex flex-wrap gap-3">
           {tags.map(({ tag, count }) => (
@@ -28,6 +29,7 @@ const recentPosts = await getRecentPosts(5);
             </a>
           ))}
         </div>
+        </article>
       </div>
     </div>
   </div>
