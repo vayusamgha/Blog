@@ -35,12 +35,6 @@ const recentPosts = await getRecentPosts(5);
         <Sidebar posts={allPosts} tags={allTags} {stats} {archives} {recentPosts} />
       </div>
       <div class="flex-1 min-w-0 order-1 lg:order-2">
-        <a
-          href={import.meta.env.BASE_URL}
-          class="text-sm text-text-muted hover:text-accent transition-colors mb-4 inline-block"
-        >
-          ← 返回
-        </a>
         <h2 class="text-2xl font-bold text-text mb-6">#{tag} <span class="text-text-muted text-lg font-normal">({filteredPosts.length})</span></h2>
         <PostList posts={allPosts} activeTag={tag} />
       </div>
