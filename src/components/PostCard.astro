@@ -8,7 +8,7 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
 const href = `${base}/posts/${post.slug}`;
 ---
 
-<article class="bg-surface rounded-xl border border-border p-5 hover:shadow-md hover:border-text-muted/30 transition-all duration-200 group">
+<article class="bg-surface rounded-xl border border-border p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-text-muted/20 transition-all duration-200 group">
   <a href={href} class="block">
     <time class="text-xs text-text-muted mb-2 block">
       {date.toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" })}
