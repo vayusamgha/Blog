@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../components/BaseLayout.astro";
+import PostList from "../components/PostList.astro";
+import { getPosts } from "../utils/posts";
+
+const posts = await getPosts();
+---
+
+<BaseLayout>
+  <div class="max-w-4xl mx-auto px-5 py-10">
+    <div class="mb-10">
+      <h1 class="text-3xl font-bold text-text mb-2">笔记</h1>
+      <p class="text-text-muted text-sm">想法、技术笔记与数学片段</p>
+    </div>
+    <PostList posts={posts} />
+  </div>
+</BaseLayout>

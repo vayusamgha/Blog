@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../components/BaseLayout.astro";
+import TagBadge from "../../components/TagBadge.astro";
+import { getPosts, getTags } from "../../utils/posts";
+
+const posts = await getPosts();
+const tags = getTags(posts);
+const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
+---
+
+<BaseLayout title="标签">
+  <div class="max-w-4xl mx-auto px-5 py-10">
+    <a
+      href={base}
+      class="text-sm text-text-muted hover:text-accent transition-colors mb-4 inline-block"
+    >
+      ← 返回
+    </a>
+    <h1 class="text-3xl font-bold text-text mb-8">标签</h1>
+    <div class="flex flex-wrap gap-3">
+      {tags.map(({ tag, count }) => (
+        <a href={`${base}/tags/${tag}`}>
+          <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface border border-border text-text-muted hover:text-text hover:border-accent transition-all duration-200">
+            <span class="text-sm font-medium">{tag}</span>
+            <span class="text-xs opacity-50">{count}</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,68 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  --color-accent: #3b82f6;
+  --color-accent-light: #93bbfd;
+  --color-bg: #fafafa;
+  --color-surface: #ffffff;
+  --color-text: #1a1a2e;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* KaTeX overrides for better visual harmony */
+.katex {
+  font-size: 1.05em;
+}
+
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5em 0;
+}
+
+/* Article prose styling */
+article.prose {
+  max-width: none;
+}
+
+article.prose pre {
+  border-radius: 0.5rem;
+  font-size: 0.875em;
+}
+
+article.prose code::before,
+article.prose code::after {
+  content: none;
+}
+
+article.prose img {
+  border-radius: 0.5rem;
+  margin: 1.5rem auto;
+}
+
+article.prose a {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+article.prose a:hover {
+  color: #2563eb;
+}
+
+article.prose .katex-display {
+  margin: 1.25rem 0;
+}

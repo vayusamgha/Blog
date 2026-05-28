@@ -1,0 +1,45 @@
+---
+const { title } = Astro.props;
+const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="个人笔记 — 技术、数学与思考" />
+    <title>{title ? `${title} — Notes` : "Notes"}</title>
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.css"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <header class="border-b border-border bg-surface/80 backdrop-blur-sm sticky top-0 z-10">
+      <nav class="max-w-4xl mx-auto px-5 h-14 flex items-center justify-between">
+        <a href={base} class="text-lg font-semibold tracking-tight text-text hover:text-accent transition-colors">
+          ~/notes
+        </a>
+        <div class="flex items-center gap-4 text-sm text-text-muted">
+          <a href={`${base}/tags`} class="hover:text-text transition-colors">标签</a>
+          <a href={`${base}/rss.xml`} class="hover:text-text transition-colors">RSS</a>
+        </div>
+      </nav>
+    </header>
+    <main class="flex-1">
+      <slot />
+    </main>
+    <footer class="border-t border-border py-8 text-center text-sm text-text-muted">
+      <p>© {new Date().getFullYear()} — Built with Astro & KaTeX</p>
+    </footer>
+  </body>
+</html>
