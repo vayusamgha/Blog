@@ -26,6 +26,7 @@ const allTags = getTags(allPosts);
 const stats = await getStats();
 const archives = await getArchives();
 const recentPosts = await getRecentPosts(5);
+const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
 ---
 
 <BaseLayout title={`#${tag}`}>
@@ -36,7 +37,7 @@ const recentPosts = await getRecentPosts(5);
       </div>
       <div class="flex-1 min-w-0 order-1 lg:order-2">
         <a
-          href={`${import.meta.env.BASE_URL}tags`}
+          href={`${base}/tags`}
           class="text-sm text-text-muted hover:text-accent transition-colors mb-4 inline-block no-underline"
         >
           ← 返回标签列表

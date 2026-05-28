@@ -8,6 +8,7 @@ const tags = getTags(posts);
 const stats = await getStats();
 const archives = await getArchives();
 const recentPosts = await getRecentPosts(5);
+const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
 ---
 
 <BaseLayout title="标签">
@@ -21,7 +22,7 @@ const recentPosts = await getRecentPosts(5);
         <h1>所有标签</h1>
         <div class="flex flex-wrap gap-3">
           {tags.map(({ tag, count }) => (
-            <a href={`${import.meta.env.BASE_URL}tags/${tag}`}>
+            <a href={`${base}/tags/${tag}`}>
               <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-surface border border-border text-text-muted hover:text-text hover:border-accent transition-all duration-200">
                 <span class="text-sm font-medium">{tag}</span>
                 <span class="text-xs opacity-50">{count}</span>
