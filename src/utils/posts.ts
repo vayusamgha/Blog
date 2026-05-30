@@ -32,7 +32,10 @@ export async function getStats() {
   if (count === 0) return { count: 0, runningDays: 0 };
   const timestamps = posts.map((p) => p.data.date.getTime());
   const firstDate = new Date(Math.min(...timestamps));
-  const runningDays = Math.max(1, Math.ceil((Date.now() - firstDate.getTime()) / (1000 * 60 * 60 * 24)));
+  const today = new Date();
+  const utcToday = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+  const utcFirst = Date.UTC(firstDate.getUTCFullYear(), firstDate.getUTCMonth(), firstDate.getUTCDate());
+  const runningDays = Math.max(1, Math.round((utcToday - utcFirst) / 86400000) + 1);
   return { count, runningDays };
 }
 
