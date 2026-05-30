@@ -2,6 +2,11 @@
 import fs from "node:fs";
 import path from "node:path";
 
+interface Props {
+  title?: string;
+}
+
+const { title = "Blog - VayuSamgha" } = Astro.props;
 const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
 
 // Random hero image from public/head_image/
@@ -34,6 +39,6 @@ try {
   <div class="absolute inset-0 bg-black/30"></div>
   <!-- Text -->
   <h1 class="relative z-10 text-4xl sm:text-5xl lg:text-6xl font-bold text-white text-center px-5" style="text-shadow: 0 2px 12px rgba(0,0,0,0.5);">
-    Blog - VayuSamgha
+    {title}
   </h1>
 </div>
