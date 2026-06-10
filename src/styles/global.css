@@ -37,6 +37,61 @@ body {
   border-radius: 0 0.5rem 0.5rem 0;
 }
 
+/* ---------- Theorem environments ---------- */
+.env-theorem,
+.env-lemma,
+.env-definition,
+.env-example,
+.env-remark {
+  border-left: 4px solid;
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  font-size: 0.95em;
+}
+
+.env-header {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.env-title {
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.env-theorem {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+.env-theorem .env-header { color: #1d4ed8; }
+.env-theorem .env-header strong { color: #1d4ed8; }
+
+.env-lemma {
+  border-color: #0ea5e9;
+  background: #f0f9ff;
+}
+.env-lemma .env-header { color: #0369a1; }
+
+.env-definition {
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+.env-definition .env-header { color: #047857; }
+
+.env-example {
+  border-color: #8b5cf6;
+  background: #f5f3ff;
+}
+.env-example .env-header { color: #6d28d9; }
+
+.env-remark {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+.env-remark .env-header { color: #b45309; }
+
 /* ---------- Article prose ---------- */
 article.prose {
   max-width: none;
