@@ -1,4 +1,4 @@
-# CLAUDE.md — 伐由伽蓝 (VayuSamgha) 博客项目
+# AGENTS.md — 伐由伽蓝 (VayuSamgha) 博客项目
 
 ## 项目概述
 
@@ -24,7 +24,7 @@ blog/
 ├── astro.config.mjs          # Astro 构建配置
 ├── package.json              # 项目依赖与脚本
 ├── tsconfig.json             # TypeScript 配置
-├── CLAUDE.md                 # 本文件：项目文档，供 Claude 会话参考
+├── AGENTS.md                 # 本文件：项目文档，供 Codex 会话参考
 ├── public/
 │   ├── image.png             # 头像/站点图标
 │   └── head_image/           # 首页 Hero 随机背景图（8 张 jpg/png/webp）
