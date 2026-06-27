@@ -29,13 +29,14 @@ const recentPosts = await getRecentPosts(5);
 const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
 ---
 
-<BaseLayout title={`#${tag}`} showHero heroTitle={`#${tag}`}>
+<BaseLayout title={`#${tag}`}>
   <div class="max-w-6xl mx-auto px-5 py-10">
     <div class="flex flex-col lg:flex-row gap-8">
       <div class="w-full lg:w-72 shrink-0 order-2 lg:order-1">
         <Sidebar posts={allPosts} tags={allTags} {stats} {archives} {recentPosts} />
       </div>
       <div class="flex-1 min-w-0 order-1 lg:order-2">
+        <h1 class="text-2xl font-bold text-text mb-2">#{tag}</h1>
         <a
           href={`${base}/tags`}
           class="text-sm text-text-muted hover:text-accent transition-colors mb-4 inline-block no-underline"
@@ -43,7 +44,7 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
           ← 返回标签列表
         </a>
         <p class="text-text-muted text-sm mb-6">{filteredPosts.length} 篇文章</p>
-        <PostList posts={allPosts} activeTag={tag} />
+        <PostList posts={filteredPosts} activeTag={tag} />
       </div>
     </div>
   </div>

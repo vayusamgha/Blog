@@ -8,7 +8,7 @@ interface Props {
 const { tag, active = false, href } = Astro.props;
 const baseClass = "inline-block px-3 py-1 text-xs font-medium rounded-full transition-colors";
 const activeClass = "bg-accent text-white";
-const inactiveClass = "bg-surface border border-border text-text-muted hover:text-text hover:border-text-muted";
+const inactiveClass = "bg-surface/70 border border-border text-text-muted hover:text-accent hover:border-accent/40 transition-all duration-200";
 
 const TagOrLink = href ? "a" : "button";
 ---

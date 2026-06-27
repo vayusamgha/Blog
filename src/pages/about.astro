@@ -10,13 +10,14 @@ const archives = await getArchives();
 const recentPosts = await getRecentPosts(5);
 ---
 
-<BaseLayout title="关于" showHero heroTitle="关于">
+<BaseLayout title="关于">
   <div class="max-w-6xl mx-auto px-5 py-10">
     <div class="flex flex-col lg:flex-row gap-8">
       <div class="w-full lg:w-72 shrink-0 order-2 lg:order-1">
         <Sidebar {posts} {tags} {stats} {archives} {recentPosts} />
       </div>
       <div class="flex-1 min-w-0 order-1 lg:order-2">
+        <h1 class="text-2xl font-bold text-text mb-6">关于</h1>
         <article class="prose prose-neutral prose-lg max-w-none">
           <p>
             这里是 <strong>伐由伽蓝 (VayuSamgha)</strong>，一个记录笔记与思考的个人博客。

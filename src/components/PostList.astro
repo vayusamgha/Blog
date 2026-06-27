@@ -10,23 +10,25 @@ const tags = getTags(posts);
 ---
 
 <div id="post-list-root">
-  <!-- Tag filter bar -->
-  <div class="flex flex-wrap items-center gap-2 mb-8" id="tag-filter-bar">
-    <button data-filter="all" class="filter-btn inline-block px-3 py-1 text-xs font-medium rounded-full transition-colors bg-accent text-white cursor-pointer">
-      全部
-    </button>
-    {tags.map(({ tag, count }) => (
-      <button data-filter={tag} class="filter-btn inline-block px-3 py-1 text-xs font-medium rounded-full transition-colors bg-surface border border-border text-text-muted hover:text-text hover:border-text-muted cursor-pointer">
-        {tag} ({count})
+  <!-- Tag filter bar — only shown on pages without a pre-selected tag -->
+  {!tagSlug && (
+    <div class="flex flex-wrap items-center gap-2 mb-8" id="tag-filter-bar">
+      <button data-filter="all" class="filter-btn inline-block px-3 py-1 text-xs font-medium rounded-full transition-colors bg-accent text-white cursor-pointer">
+        全部
       </button>
-    ))}
-  </div>
+      {tags.map(({ tag, count }) => (
+        <button data-filter={tag} class="filter-btn inline-block px-3 py-1 text-xs font-medium rounded-full transition-all duration-200 bg-surface border border-border text-text-muted hover:text-accent hover:border-accent/40 cursor-pointer">
+          {tag} ({count})
+        </button>
+      ))}
+    </div>
+  )}
 
   <!-- Post grid -->
   <div id="post-grid" class="grid gap-5 sm:grid-cols-2">
-    {posts.map((post) => (
+    {posts.map((post, i) => (
       <div data-tags={post.data.tags.join(",")} class="post-card-wrapper">
-        <PostCard post={post} />
+        <PostCard post={post} index={i} />
       </div>
     ))}
   </div>
@@ -36,51 +38,44 @@ const tags = getTags(posts);
   </div>
 </div>
 
-<script>
-  (function () {
-    const buttons = document.querySelectorAll("#tag-filter-bar .filter-btn");
-    const cards = document.querySelectorAll(".post-card-wrapper");
-    const noResults = document.getElementById("no-results");
-    const grid = document.getElementById("post-grid");
-    let active = "all";
+{!tagSlug && (
+  <script>
+    (function () {
+      const buttons = document.querySelectorAll("#tag-filter-bar .filter-btn");
+      const cards = document.querySelectorAll(".post-card-wrapper");
+      const noResults = document.getElementById("no-results");
+      const grid = document.getElementById("post-grid");
+      let active = "all";
 
-    buttons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const filter = btn.dataset.filter;
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const filter = btn.dataset.filter;
 
-        if (filter === active) {
-          // Deselect, show all
-          active = "all";
-        } else {
-          active = filter;
-        }
-
-        // Update button styles
-        buttons.forEach((b) => {
-          if (b.dataset.filter === active) {
-            b.classList.add("bg-accent", "text-white");
-            b.classList.remove("bg-surface", "border", "border-border", "text-text-muted", "hover:text-text", "hover:border-text-muted");
+          if (filter === active) {
+            active = "all";
           } else {
-            b.classList.remove("bg-accent", "text-white");
-            b.classList.add("bg-surface", "border", "border-border", "text-text-muted");
+            active = filter;
           }
-        });
 
-        // Filter cards
-        let visible = 0;
-        cards.forEach((card) => {
-          const tags = card.dataset.tags?.split(",") || [];
-          if (active === "all" || tags.includes(active)) {
-            card.style.display = "";
-            visible++;
-          } else {
-            card.style.display = "none";
-          }
-        });
+          buttons.forEach((b) => {
+            b.classList.toggle("active", b.dataset.filter === active);
+          });
 
-        noResults.classList.toggle("hidden", visible > 0);
-        grid.classList.toggle("hidden", visible === 0);
+          let visible = 0;
+          cards.forEach((card) => {
+            const tags = card.dataset.tags?.split(",") || [];
+            if (active === "all" || tags.includes(active)) {
+              card.style.display = "";
+              visible++;
+            } else {
+              card.style.display = "none";
+            }
+          });
+
+          noResults.classList.toggle("hidden", visible > 0);
+          grid.classList.toggle("hidden", visible === 0);
+        });
       });
-    });
-  })();
-</script>
+    })();
+  </script>
+)}

@@ -1,17 +1,15 @@
 ---
 import "../styles/global.css";
 import NavBar from "./NavBar.astro";
-import Hero from "./Hero.astro";
 import Footer from "./Footer.astro";
 
 interface Props {
   title?: string;
-  showHero?: boolean;
-  heroTitle?: string;
 }
 
-const { title, showHero = false, heroTitle } = Astro.props;
+const { title } = Astro.props;
 const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -35,21 +33,21 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
     />
   </head>
   <body class="min-h-screen flex flex-col bg-bg">
-    <!-- Top nav bar -->
-    <header class="sticky top-0 z-20 bg-surface/80 backdrop-blur-sm border-b border-border">
-      <div class="max-w-6xl mx-auto px-5 h-12 flex items-center justify-between">
-        <a href={base} class="text-sm sm:text-base font-semibold text-text hover:text-accent transition-colors shrink-0 mr-2 sm:mr-6">
+    <!-- Top nav bar — 悬浮胶囊 -->
+    <header
+      id="top-bar"
+      class="fixed top-5 inset-x-20 z-20 rounded-2xl lg:inset-x-auto lg:left-1/2 lg:-translate-x-1/2 lg:rounded-full lg:w-auto glass-nav"
+    >
+      <div class="px-3 sm:px-4 h-11 flex items-center justify-center gap-1 sm:gap-2">
+        <a href={base} class="text-sm sm:text-base font-serif font-semibold text-text hover:text-accent transition-colors shrink-0 mr-1 sm:mr-3">
           伐由伽蓝
         </a>
-        <NavBar />
+        <NavBar currentPath={currentPath} />
       </div>
     </header>
 
-    <!-- Hero (only on home page) -->
-    {showHero && <Hero title={heroTitle} />}
-
     <!-- Search overlay -->
-    <div id="search-overlay" data-base={base} class="fixed inset-0 z-50 hidden" style="background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);">
+    <div id="search-overlay" data-base={base} class="fixed inset-0 z-50 hidden glass-overlay">
       <div class="max-w-xl mx-auto mt-24 px-5">
         <div class="bg-surface rounded-2xl shadow-2xl border border-border p-5">
           <div class="relative mb-4">
@@ -70,13 +68,12 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
       </div>
     </div>
 
-    <main class="flex-1">
+    <main class="flex-1 pt-20">
       <slot />
     </main>
 
     <Footer />
 
-    <script src={`${base}/pagefind/pagefind.js`}></script>
     <script is:inline>
       (function() {
         const overlay = document.getElementById("search-overlay");
@@ -91,7 +88,11 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
 
         async function initPagefind() {
           if (pagefind) return;
-          pagefind = await import(base + "/pagefind/pagefind.js");
+          try {
+            pagefind = await import(base + "/pagefind/pagefind.js");
+          } catch {
+            pagefind = false;
+          }
         }
 
         function openSearch() {
@@ -111,6 +112,11 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
         }
 
         async function doSearch(query) {
+          if (pagefind === false) {
+            results.innerHTML = '<p class="text-center text-sm text-text-muted py-4">搜索仅在构建后可用（npm run build）</p>';
+            empty.style.display = "none";
+            return;
+          }
           if (!pagefind || !query.trim()) {
             results.innerHTML = "";
             empty.classList.remove("hidden");
@@ -163,6 +169,31 @@ const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
             openSearch();
           }
         });
+      })();
+    </script>
+
+    <!-- 顶栏滚动 -->
+    <script is:inline>
+      (function() {
+        const bar = document.getElementById('top-bar');
+        if (!bar) return;
+        let ticking = false;
+
+        function onScroll() {
+          if (!ticking) {
+            requestAnimationFrame(() => {
+              const y = window.scrollY;
+              // 胶囊加深
+              bar.classList.toggle('scrolled', y > 40);
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        // 初始触发
+        onScroll();
       })();
     </script>
   </body>

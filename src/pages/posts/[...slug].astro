@@ -45,53 +45,60 @@ for (const h of headings) {
   <div class="relative max-w-6xl mx-auto">
     <!-- Article -->
     <article class="px-5 py-10 lg:pr-64">
-      <header class="mb-10 max-w-3xl mx-auto">
-        <a
-          href={base}
-          class="text-sm text-text-muted hover:text-accent transition-colors mb-4 inline-block"
-        >
-          ← 返回
-        </a>
-        <h1 class="text-3xl font-bold text-text mb-3 leading-tight">{title}</h1>
-        <div class="flex flex-wrap items-center gap-3 text-sm text-text-muted">
-          <time>
-            {date.toLocaleDateString("zh-CN", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </time>
-          {
-            tags.length > 0 && (
-              <span class="flex flex-wrap gap-1.5">
-                {tags.map((tag) => (
-                  <a
-                    href={`${base}/tags/${tag}`}
-                    class="text-accent hover:underline"
-                  >
-                    #{tag}
-                  </a>
-                ))}
-              </span>
-            )
-          }
-        </div>
-      </header>
+      <div class="glass rounded-2xl p-6 sm:p-8 md:p-10 max-w-3xl mx-auto animate-article-land">
+        <header class="mb-10">
+          <!-- 装饰线 — 风之痕画出 -->
+          <div class="w-12 h-0.5 bg-accent/50 rounded-full mb-6"></div>
+          <a
+            href={base}
+            class="text-sm text-text-muted hover:text-accent transition-colors mb-4 inline-block"
+          >
+            ← 返回
+          </a>
+          <h1 class="text-3xl sm:text-4xl font-serif font-semibold text-text mb-4 leading-tight">{title}</h1>
+          <div class="flex flex-wrap items-center gap-3 text-sm text-text-muted">
+            <time>
+              {date.toLocaleDateString("zh-CN", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </time>
+            {
+              tags.length > 0 && (
+                <span class="flex flex-wrap gap-1.5">
+                  {tags.map((tag) => (
+                    <a
+                      href={`${base}/tags/${tag}`}
+                      class="text-accent hover:underline"
+                    >
+                      #{tag}
+                    </a>
+                  ))}
+                </span>
+              )
+            }
+          </div>
+        </header>
 
-      <div class="prose prose-neutral prose-lg max-w-3xl mx-auto">
-        <Content />
+        <div class="prose prose-neutral prose-lg max-w-none">
+          <Content />
+        </div>
       </div>
     </article>
 
-    <!-- TOC sidebar -->
+    <!-- TOC sidebar — 桌面端固定右侧 / 移动端滑出面板 -->
     {
       tocTree.length > 0 && (
         <aside
           id="toc-sidebar"
-          class="hidden lg:block fixed top-24 right-[max(1.5rem,calc((100vw-72rem)/2))] w-56 max-h-[calc(100vh-8rem)] overflow-y-auto"
+          class="fixed top-0 right-0 z-50 h-full w-64 max-h-full overflow-y-auto glass rounded-l-2xl rounded-r-none p-4 translate-x-full transition-transform duration-300 lg:translate-x-0 lg:top-24 lg:right-[max(1.5rem,calc((100vw-72rem)/2))] lg:w-56 lg:max-h-[calc(100vh-8rem)] lg:h-auto lg:rounded-2xl lg:z-0"
         >
           <h4 class="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">
-            目录
+            <span>目录</span>
+            <button id="toc-close" class="lg:hidden absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-text-muted hover:text-text hover:bg-bg transition-colors" aria-label="关闭目录">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
           </h4>
           <nav id="toc-nav">
             <ul class="border-l-2 border-border">
@@ -107,38 +114,46 @@ for (const h of headings) {
                   </a>
                   {
                     h2.children.length > 0 && (
-                      <ul class="toc-children hidden">
-                        {h2.children.map((h3) => (
-                          <li>
-                            <a
-                              href={`#${h3.slug}`}
-                              data-toc-link={h3.slug}
-                              data-toc-depth="3"
-                              class="block py-1 text-sm text-text-muted hover:text-text transition-colors border-l-2 -ml-0.5 pl-5 border-transparent"
-                            >
-                              {h3.text}
-                            </a>
-                            {
-                              h3.children.length > 0 && (
-                                <ul class="toc-children hidden">
-                                  {h3.children.map((h4) => (
-                                    <li>
-                                      <a
-                                        href={`#${h4.slug}`}
-                                        data-toc-link={h4.slug}
-                                        data-toc-depth="4"
-                                        class="block py-1 text-sm text-text-muted hover:text-text transition-colors border-l-2 -ml-0.5 pl-7 border-transparent"
-                                      >
-                                        {h4.text}
-                                      </a>
-                                    </li>
-                                  ))}
-                                </ul>
-                              )
-                            }
-                          </li>
-                        ))}
-                      </ul>
+                      <div class="toc-children">
+                        <div>
+                          <ul>
+                            {h2.children.map((h3) => (
+                              <li>
+                                <a
+                                  href={`#${h3.slug}`}
+                                  data-toc-link={h3.slug}
+                                  data-toc-depth="3"
+                                  class="block py-1 text-sm text-text-muted hover:text-text transition-colors border-l-2 -ml-0.5 pl-5 border-transparent"
+                                >
+                                  {h3.text}
+                                </a>
+                                {
+                                  h3.children.length > 0 && (
+                                    <div class="toc-children">
+                                      <div>
+                                        <ul>
+                                          {h3.children.map((h4) => (
+                                            <li>
+                                              <a
+                                                href={`#${h4.slug}`}
+                                                data-toc-link={h4.slug}
+                                                data-toc-depth="4"
+                                                class="block py-1 text-sm text-text-muted hover:text-text transition-colors border-l-2 -ml-0.5 pl-7 border-transparent"
+                                              >
+                                                {h4.text}
+                                              </a>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  )
+                                }
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
                     )
                   }
                 </li>
@@ -146,6 +161,18 @@ for (const h of headings) {
             </ul>
           </nav>
         </aside>
+      )
+    }
+
+    <!-- 移动端目录：遮罩 + 浮动按钮 -->
+    {
+      tocTree.length > 0 && (
+        <>
+          <div id="toc-backdrop" class="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"></div>
+          <button id="toc-toggle" class="fixed bottom-6 right-6 z-30 lg:hidden w-11 h-11 rounded-full bg-accent text-white shadow-lg flex items-center justify-center active:scale-95 transition-transform" aria-label="目录">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+        </>
       )
     }
   </div>
@@ -156,62 +183,86 @@ for (const h of headings) {
     const links = document.querySelectorAll("[data-toc-link]");
     if (links.length === 0) return;
 
+    // --- Mobile TOC toggle ---
+    const sidebar = document.getElementById("toc-sidebar");
+    const toggle = document.getElementById("toc-toggle");
+    const close = document.getElementById("toc-close");
+    const backdrop = document.getElementById("toc-backdrop");
+
+    function openToc() {
+      sidebar?.classList.add("!translate-x-0");
+      backdrop?.classList.add("!opacity-100", "!pointer-events-auto");
+      document.body.style.overflow = "hidden";
+    }
+    function closeToc() {
+      sidebar?.classList.remove("!translate-x-0");
+      backdrop?.classList.remove("!opacity-100", "!pointer-events-auto");
+      document.body.style.overflow = "";
+    }
+    toggle?.addEventListener("click", openToc);
+    close?.addEventListener("click", closeToc);
+    backdrop?.addEventListener("click", closeToc);
+    // Close toc when a link is clicked (mobile nav)
+    sidebar?.addEventListener("click", (e) => {
+      if (e.target.closest("[data-toc-link]")) closeToc();
+    });
+
     const articleHeadings = [...document.querySelectorAll("article.prose h2, article.prose h3, article.prose h4")];
-
-    // --- Expand/collapse based on active h2 section ---
-    const h2Headings = articleHeadings.filter((h) => h.tagName === "H2");
     const tocGroups = document.querySelectorAll(".toc-group");
+    // Map for O(1) group lookup by slug
+    const groupMap = new Map();
+    tocGroups.forEach((g) => groupMap.set(g.dataset.tocGroup, g));
 
-    function expandGroup(h2Slug) {
-      tocGroups.forEach((group) => {
-        const children = group.querySelector(":scope > .toc-children");
-        if (!children) return;
-        if (group.dataset.tocGroup === h2Slug) {
-          children.classList.remove("hidden");
-        } else {
-          children.classList.add("hidden");
-          // Also collapse nested grandchildren
-          children.querySelectorAll(".toc-children").forEach((c) => c.classList.add("hidden"));
-        }
-      });
+    let scrollActiveGroup = null;   // 当前滚动到的 h2 group
+    let hoverGroup = null;          // 当前鼠标悬停的 group
+    let prevActiveLink = null;      // 上一次高亮的链接
+
+    // --- Expand a specific h2 group ---
+    function setGroupOpen(slug, open) {
+      const group = groupMap.get(slug);
+      if (!group) return;
+      const children = group.querySelector(":scope > .toc-children");
+      if (children) children.classList.toggle("open", open);
     }
 
-    // --- Highlight active heading ---
+    // --- Highlight active link ---
     function highlightLink(activeId) {
-      links.forEach((link) => {
-        if (link.dataset.tocLink === activeId) {
-          link.classList.add("!text-accent", "!border-accent");
-          // Expand parent h2 group if this is a child
-          const parentGroup = link.closest(".toc-group");
-          if (parentGroup) {
-            expandGroup(parentGroup.dataset.tocGroup);
-          }
-          // Expand parent h3 group if this is an h4
-          const parentLi = link.closest("li")?.parentElement?.closest("li");
-          if (parentLi) {
-            const grandChildren = parentLi.querySelector(":scope > .toc-children");
-            if (grandChildren) grandChildren.classList.remove("hidden");
-          }
-        } else {
-          link.classList.remove("!text-accent", "!border-accent");
+      // Fast path: same link
+      const activeLink = document.querySelector(`[data-toc-link="${activeId}"]`);
+      if (activeLink === prevActiveLink) return;
+
+      if (prevActiveLink) {
+        prevActiveLink.classList.remove("!text-accent", "!border-accent");
+      }
+
+      if (activeLink) {
+        activeLink.classList.add("!text-accent", "!border-accent");
+        const parentGroup = activeLink.closest(".toc-group");
+        if (parentGroup && parentGroup.dataset.tocGroup) {
+          scrollActiveGroup = parentGroup.dataset.tocGroup;
+          if (!hoverGroup) setGroupOpen(scrollActiveGroup, true);
         }
-      });
+        const parentLi = activeLink.closest("li")?.parentElement?.closest("li");
+        if (parentLi) {
+          const grandChildren = parentLi.querySelector(":scope > .toc-children");
+          if (grandChildren) grandChildren.classList.add("open");
+        }
+      }
+
+      prevActiveLink = activeLink;
     }
 
+    // --- IntersectionObserver: 滚动高亮 ---
     const observer = new IntersectionObserver(
       (entries) => {
         let activeId = null;
         for (const entry of entries) {
-          if (entry.isIntersecting) {
-            activeId = entry.target.id;
-            break;
-          }
+          if (entry.isIntersecting) { activeId = entry.target.id; break; }
         }
         if (!activeId) {
           for (let i = entries.length - 1; i >= 0; i--) {
             if (entries[i].boundingClientRect.top < 100) {
-              activeId = entries[i].target.id;
-              break;
+              activeId = entries[i].target.id; break;
             }
           }
         }
@@ -222,18 +273,47 @@ for (const h of headings) {
 
     articleHeadings.forEach((h) => observer.observe(h));
 
-    // --- Click on h2 toggles its children ---
+    // --- 所有 TOC 链接：平滑滚动 ---
+    links.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const id = link.dataset.tocLink;
+        const heading = document.getElementById(id);
+        if (heading) {
+          const offset = 100;
+          const y = heading.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      });
+    });
+
+    // --- 悬停展开：鼠标在有子级的 h2 上时展开 ---
+    let openByHover = null;  // 当前因 hover 而打开的 group 元素
+
     document.querySelectorAll("[data-toc-depth='2']").forEach((h2Link) => {
-      h2Link.addEventListener("click", (e) => {
-        const group = h2Link.closest(".toc-group");
-        if (!group) return;
-        const children = group.querySelector(":scope > .toc-children");
-        if (!children) return;
-        // Toggle only if clicking the already-active h2 (otherwise navigation happens first)
-        const wasHidden = children.classList.contains("hidden");
-        children.classList.toggle("hidden", !wasHidden);
-        if (!wasHidden) {
-          children.querySelectorAll(".toc-children").forEach((c) => c.classList.add("hidden"));
+      const group = h2Link.closest(".toc-group");
+      if (!group) return;
+      const children = group.querySelector(":scope > .toc-children");
+      if (!children) return;
+
+      h2Link.addEventListener("mouseenter", () => {
+        hoverGroup = group.dataset.tocGroup;
+        // 只收起上一个 hover 打开的 group（O(1) 而非 O(n)）
+        if (openByHover && openByHover !== group) {
+          const c = openByHover.querySelector(":scope > .toc-children");
+          if (c) c.classList.remove("open");
+        }
+        children.classList.add("open");
+        openByHover = group;
+      });
+
+      group.addEventListener("mouseleave", () => {
+        hoverGroup = null;
+        openByHover = null;
+        children.classList.remove("open");
+        // 恢复滚动活跃的 group（如果不同）
+        if (scrollActiveGroup && scrollActiveGroup !== group.dataset.tocGroup) {
+          setGroupOpen(scrollActiveGroup, true);
         }
       });
     });

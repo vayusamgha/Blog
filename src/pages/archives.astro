@@ -20,13 +20,14 @@ for (const post of posts) {
 const monthGroups = [...grouped.entries()];
 ---
 
-<BaseLayout title="归档" showHero heroTitle="归档">
+<BaseLayout title="归档">
   <div class="max-w-6xl mx-auto px-5 py-10">
     <div class="flex flex-col lg:flex-row gap-8">
       <div class="w-full lg:w-72 shrink-0 order-2 lg:order-1">
         <Sidebar {posts} {tags} {stats} {archives} {recentPosts} />
       </div>
       <div class="flex-1 min-w-0 order-1 lg:order-2">
+        <h1 class="text-2xl font-bold text-text mb-6">归档</h1>
         {
           monthGroups.map(([month, monthPosts]) => (
             <section class="mb-8">

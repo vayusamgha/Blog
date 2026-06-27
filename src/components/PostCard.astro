@@ -2,18 +2,21 @@
 import type { CollectionEntry } from "astro:content";
 import TagBadge from "./TagBadge.astro";
 
-const { post } = Astro.props;
+const { post, index = 0 } = Astro.props;
 const { title, date, tags, description } = post.data;
 const base = (import.meta.env.BASE_URL ?? "/").replace(/\/$/, "") || "/";
 const href = `${base}/posts/${post.slug}`;
 ---
 
-<article class="bg-surface rounded-xl border border-border p-5 hover:shadow-lg hover:-translate-y-0.5 hover:border-text-muted/20 transition-all duration-200 group">
+<article
+  class="glass rounded-2xl p-6 group animate-card-enter"
+  style={`animation-delay: ${index * 60}ms`}
+>
   <a href={href} class="block">
     <time class="text-xs text-text-muted mb-2 block">
       {date.toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" })}
     </time>
-    <h2 class="text-lg font-semibold text-text group-hover:text-accent transition-colors leading-snug mb-2">
+    <h2 class="text-lg font-serif font-semibold text-text group-hover:text-accent transition-colors leading-snug mb-2">
       {title}
     </h2>
     {
@@ -26,7 +29,7 @@ const href = `${base}/posts/${post.slug}`;
   </a>
   {
     tags.length > 0 && (
-      <div class="flex flex-wrap gap-1.5 mt-3">
+      <div class="flex flex-wrap gap-1.5 mt-4">
         {tags.map((tag) => (
           <a href={`${base}/tags/${tag}`}>
             <TagBadge tag={tag} />

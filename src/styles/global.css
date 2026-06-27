@@ -5,24 +5,137 @@
   --font-sans: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Source Serif 4", "LXGW WenKai", "Noto Serif SC", Georgia, serif;
   --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
-  --color-accent: #3b82f6;
-  --color-accent-light: #93bbfd;
-  --color-bg: #fafafa;
-  --color-surface: #ffffff;
-  --color-text: #1a1a2e;
-  --color-text-muted: #6b7280;
-  --color-border: #e5e7eb;
+  --color-accent: #4a7c74;
+  --color-accent-light: #a3cdc6;
+  --color-bg: #f5f6f5;
+  --color-surface: #fbfcfb;
+  --color-text: #1c2120;
+  --color-text-muted: #7a8582;
+  --color-border: #d5ddd9;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-bg);
+  /* 浅底渐变：淡青绿 + 淡天蓝 — 为 Blob 提供明亮画布 */
+  background:
+    linear-gradient(0deg,
+      #dce7e1 0%,
+      #dde5ec 0%,
+      #d9e4de 0%,
+      #dfe7ee 0%,
+      #dbe5e0 0%);
+  background-attachment: fixed;
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
 }
 
-/* ---------- KaTeX ---------- */
+/* —— 三枚巨大柔光色块 —— */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    /* 左上：翠绿调 — 青瓷 */
+    radial-gradient(ellipse 80% 60% at 12% 10%, rgba(55,145,105,0.3) 0%, transparent 60%),
+    /* 左下：天蓝调 — 长空 */
+    radial-gradient(ellipse 75% 60% at 10% 88%, rgba(68,125,178,0.27) 0%, transparent 55%),
+    /* 右中：暖灰褐 — 禅寺木石 */
+    radial-gradient(ellipse 55% 50% at 90% 60%, rgba(188,150,108,0.3) 0%, transparent 58%);
+}
+
+/* —— 纸张纹理：Noise ~3% —— */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.08;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* —— 液态玻璃工具类 —— */
+.glass {
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.45) 0%,
+    rgba(251,252,251,0.52) 35%,
+    rgba(248,250,248,0.58) 100%
+  );
+  backdrop-filter: saturate(2) blur(24px);
+  -webkit-backdrop-filter: saturate(2) blur(24px);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow:
+    /* 顶部内侧高光 — 光从上方来 */
+    inset 0 0.5px 0 rgba(255,255,255,0.7),
+    /* 左上内侧高光 */
+    inset 0 1px 2px rgba(255,255,255,0.4),
+    /* 外部投影 — 玻璃厚度 */
+    0 2px 16px rgba(28,33,32,0.05),
+    0 0.5px 2px rgba(28,33,32,0.04);
+  transition: all 0.35s ease;
+}
+
+.glass:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.55) 0%,
+    rgba(251,252,251,0.62) 35%,
+    rgba(248,250,248,0.68) 100%
+  );
+  border-color: rgba(255,255,255,0.65);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.8),
+    inset 0 1px 2px rgba(255,255,255,0.5),
+    0 6px 28px rgba(28,33,32,0.08),
+    0 1px 4px rgba(28,33,32,0.05);
+}
+
+.glass-strong {
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.6) 0%,
+    rgba(251,252,251,0.68) 35%,
+    rgba(248,250,248,0.72) 100%
+  );
+  backdrop-filter: saturate(1.8) blur(16px);
+  -webkit-backdrop-filter: saturate(1.8) blur(16px);
+  border: 1px solid rgba(255,255,255,0.55);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.65),
+    0 1px 8px rgba(28,33,32,0.04);
+}
+
+/* — 顶栏悬浮胶囊（薄玻璃，与 .glass 同材质族） — */
+.glass-nav {
+  background: rgba(251,252,251,0.4);
+  backdrop-filter: saturate(1.8) blur(14px);
+  -webkit-backdrop-filter: saturate(1.8) blur(14px);
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 0 1px 4px rgba(28,33,32,0.03);
+}
+
+/* — 侧边栏轻玻璃（降低视觉权重，不抢内容卡片的注意力） — */
+.glass-subtle {
+  background: rgba(251,252,251,0.35);
+  backdrop-filter: saturate(1.5) blur(12px);
+  -webkit-backdrop-filter: saturate(1.5) blur(12px);
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 1px 8px rgba(28,33,32,0.03);
+}
+
+/* — 暗色遮罩（搜索覆盖层） — */
+.glass-overlay {
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ---------- KaTeX — 液态玻璃，凹陷于正文中 ---------- */
 .katex {
   font-size: 1.05em;
 }
@@ -30,30 +143,35 @@ body {
 .katex-display {
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.75em 0 0.75em 1rem;
-  margin: 1.25rem 0;
-  border-left: 3px solid var(--color-border);
-  background: #f8fafc;
-  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 0.75em 0;
+  margin: 1.5rem 0;
+  background: transparent;
 }
 
-/* ---------- Theorem environments ---------- */
+/* ---------- 定理环境 — 液态玻璃，无左边线，光影分层 ---------- */
 .env-theorem,
 .env-lemma,
 .env-definition,
 .env-example,
 .env-remark {
-  border-left: 4px solid;
-  border-radius: 0 0.5rem 0.5rem 0;
-  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  padding: 1.125rem 1.5rem;
   margin: 1.5rem 0;
   font-size: 0.95em;
+  backdrop-filter: transparent;
+  -webkit-backdrop-filter: transparent;
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255,255,255,0.5),
+    0 2px 8px rgba(28,33,32,0.06),
+    0 0.5px 2px rgba(28,33,32,0.04);
 }
 
 .env-header {
   font-weight: 600;
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
 }
 
 .env-title {
@@ -62,35 +180,30 @@ body {
 }
 
 .env-theorem {
-  border-color: #3b82f6;
-  background: #eff6ff;
+  background: rgba(210,240,228,0.28);
 }
-.env-theorem .env-header { color: #1d4ed8; }
-.env-theorem .env-header strong { color: #1d4ed8; }
+.env-theorem .env-header { color: #2d5b54; }
+.env-theorem .env-header strong { color: #2d5b54; }
 
 .env-lemma {
-  border-color: #0ea5e9;
-  background: #f0f9ff;
+  background: rgba(205,232,245,0.26);
 }
-.env-lemma .env-header { color: #0369a1; }
+.env-lemma .env-header { color: #3a6a74; }
 
 .env-definition {
-  border-color: #10b981;
-  background: #ecfdf5;
+  background: rgba(225,242,212,0.28);
 }
-.env-definition .env-header { color: #047857; }
+.env-definition .env-header { color: #4a6a38; }
 
 .env-example {
-  border-color: #8b5cf6;
-  background: #f5f3ff;
+  background: rgba(225,228,242,0.26);
 }
-.env-example .env-header { color: #6d28d9; }
+.env-example .env-header { color: #4a5d75; }
 
 .env-remark {
-  border-color: #f59e0b;
-  background: #fffbeb;
+  background: rgba(248,238,210,0.28);
 }
-.env-remark .env-header { color: #b45309; }
+.env-remark .env-header { color: #7a5d2b; }
 
 /* ---------- Article prose ---------- */
 article.prose {
@@ -104,17 +217,46 @@ article.prose h3,
 article.prose h4,
 article.prose h5,
 article.prose h6 {
-  font-family: var(--font-sans);
+  font-family: var(--font-serif);
+}
+
+article.prose h2,
+article.prose h3,
+article.prose h4 {
+  scroll-margin-top: 80px;
+}
+
+article.prose h2 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 2.25rem;
+}
+
+article.prose h3 {
+  font-weight: 550;
+  letter-spacing: -0.005em;
 }
 
 article.prose pre {
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   font-size: 0.875em;
+  background: rgba(248,250,248,0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border: 1px solid rgba(255,255,255,0.4);
 }
 
 article.prose code::before,
 article.prose code::after {
   content: none;
+}
+
+article.prose :not(pre) > code {
+  background: rgba(74,124,116,0.08);
+  color: #3d6b64;
+  padding: 0.125em 0.375em;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
 }
 
 article.prose img {
@@ -130,7 +272,7 @@ article.prose a {
 }
 
 article.prose a:hover {
-  color: #2563eb;
+  color: #3d6b64;
 }
 
 /* ---------- Search overlay ---------- */
@@ -141,4 +283,106 @@ article.prose a:hover {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* ========== 动效系统 ========== */
+
+/* — L1 呼吸入场：卡片淡入上浮 — */
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-card-enter {
+  animation: cardEnter 0.5s ease-out both;
+}
+
+/* — L1 文章玻璃卡片落下 — */
+@keyframes articleLand {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-article-land {
+  animation: articleLand 0.35s ease-out both;
+}
+
+/* — 顶栏 active 指示器 — */
+#nav-pill {
+  pointer-events: none;
+  background: rgba(255,255,255,0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.6), 0 1px 3px rgba(28,33,32,0.04);
+}
+
+/* — 目录伸缩动画 — */
+.toc-children {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toc-children > * {
+  overflow: hidden;
+}
+
+.toc-children.open {
+  grid-template-rows: 1fr;
+}
+
+/* — L3 定理环境 hover — */
+.env-theorem,
+.env-lemma,
+.env-definition,
+.env-example,
+.env-remark {
+  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.env-theorem:hover,
+.env-lemma:hover,
+.env-definition:hover,
+.env-example:hover,
+.env-remark:hover {
+  box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.6), 0 3px 12px rgba(28,33,32,0.08), 0 0.5px 2px rgba(28,33,32,0.05);
+}
+
+.env-theorem:hover    { background: rgba(210,240,228,0.55); border-color: rgba(74,124,116,0.4); }
+.env-lemma:hover      { background: rgba(205,232,245,0.52); border-color: rgba(100,160,180,0.4); }
+.env-definition:hover { background: rgba(225,242,212,0.55); border-color: rgba(120,170,100,0.4); }
+.env-example:hover    { background: rgba(225,228,242,0.52); border-color: rgba(140,150,185,0.4); }
+.env-remark:hover     { background: rgba(248,238,210,0.55); border-color: rgba(200,170,100,0.4); }
+
+/* — L2 顶栏滚动加深 — */
+#top-bar {
+  transition: background 0.5s ease, backdrop-filter 0.5s ease,
+              box-shadow 0.5s ease, transform 0.4s ease, border-color 0.5s ease;
+}
+
+#top-bar.scrolled {
+  background: rgba(251,252,251,0.72);
+  backdrop-filter: saturate(2) blur(18px);
+  -webkit-backdrop-filter: saturate(2) blur(18px);
+  box-shadow: 0 2px 16px rgba(28,33,32,0.06), 0 0.5px 2px rgba(28,33,32,0.04);
+  border-color: rgba(255,255,255,0.55);
+}
+
+/* — 标签筛选按钮 active 态 — */
+.filter-btn.active {
+  background: var(--color-accent);
+  color: white;
 }
