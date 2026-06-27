@@ -14,6 +14,11 @@
   --color-border: #d5ddd9;
 }
 
+/* 防止浏览器 overscroll 露出白色 */
+html {
+  background: #dce7e1;
+}
+
 body {
   font-family: var(--font-sans);
   /* 浅底渐变：淡青绿 + 淡天蓝 — 为 Blob 提供明亮画布 */
