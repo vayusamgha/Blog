@@ -153,6 +153,16 @@ body::after {
   background: transparent;
 }
 
+/* 公式编号固定，公式内容滚动 */
+.katex-display .tag {
+  position: sticky;
+  right: 0;
+  background: var(--color-bg);
+  padding-left: 0.6em;
+  margin-left: 0.5em;
+  z-index: 1;
+}
+
 /* ---------- 定理环境 — 液态玻璃，无左边线，光影分层 ---------- */
 .env-theorem,
 .env-lemma,
