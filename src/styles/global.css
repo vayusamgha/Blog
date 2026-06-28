@@ -192,6 +192,32 @@ body::after {
     0 1px 3px rgba(28, 33, 32, 0.05);
 }
 
+/* 拍平编号内部的 vlist 结构 — 消除文字下方的多余高度色块 */
+.katex-display .katex-tag .vlist-t2,
+.katex-display .katex-display-tag .vlist-t2,
+.katex-display .eqno .vlist-t2,
+.katex-display .tag .vlist-t2 {
+  display: inline !important;
+}
+.katex-display .katex-tag .vlist,
+.katex-display .katex-display-tag .vlist,
+.katex-display .eqno .vlist,
+.katex-display .tag .vlist {
+  height: auto !important;
+}
+.katex-display .katex-tag .vlist > span,
+.katex-display .katex-display-tag .vlist > span,
+.katex-display .eqno .vlist > span,
+.katex-display .tag .vlist > span {
+  position: static !important;
+}
+.katex-display .katex-tag .pstrut,
+.katex-display .katex-display-tag .pstrut,
+.katex-display .eqno .pstrut,
+.katex-display .tag .pstrut {
+  display: none;
+}
+
 /* 滚动条下移到 .katex 层 */
 .katex-display > .katex::-webkit-scrollbar {
   height: 4px;
