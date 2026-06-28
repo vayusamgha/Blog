@@ -151,16 +151,33 @@ body::after {
   padding: 0.75em 0;
   margin: 1.5rem 0;
   background: transparent;
+  position: relative; /* 为 sticky 提供定位上下文 */
 }
 
-/* 公式编号固定，公式内容滚动 */
+/* 公式编号固定在右侧，公式内容可横向滚动 */
+/* 兼容不同 KaTeX 渲染器生成的编号类名 */
+.katex-display .katex-tag,
+.katex-display .katex-display-tag,
+.katex-display .eqno,
 .katex-display .tag {
-  position: sticky;
+  position: sticky !important;
   right: 0;
-  background: var(--color-bg);
-  padding-left: 0.6em;
+  /* 使用渐变背景防止滚动时公式与编号重叠难以辨认 */
+  background: linear-gradient(to right, transparent, rgba(251, 252, 251, 0.95) 35%);
+  padding-left: 1.5em;
   margin-left: 0.5em;
   z-index: 1;
+  float: none !important; /* 覆盖某些渲染器的 float: right */
+  display: inline-block;
+}
+
+/* 隐藏滚动条但保持滚动功能（可选，让界面更干净） */
+.katex-display::-webkit-scrollbar {
+  height: 4px;
+}
+.katex-display::-webkit-scrollbar-thumb {
+  background: rgba(74, 124, 116, 0.2);
+  border-radius: 2px;
 }
 
 /* ---------- 定理环境 — 液态玻璃，无左边线，光影分层 ---------- */
