@@ -162,8 +162,8 @@ body::after {
 .katex-display .tag {
   position: sticky !important;
   right: 0;
-  /* 使用渐变背景防止滚动时公式与编号重叠难以辨认 */
-  background: linear-gradient(to right, transparent, rgba(251, 252, 251, 0.95) 35%);
+  /* 渐变背景防止滚动重叠，取色所在位置背景 --color-surface */
+  background: linear-gradient(to right, transparent, color-mix(in srgb, var(--color-surface) 95%, transparent) 35%);
   padding-left: 1.5em;
   margin-left: 0.5em;
   z-index: 1;
