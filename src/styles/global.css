@@ -146,34 +146,45 @@ body::after {
 }
 
 .katex-display {
-  overflow-x: auto;
+  overflow-x: visible;   /* 不在这一层滚动，让内部 .katex 滚动 */
   overflow-y: hidden;
   padding: 0.75em 0;
   margin: 1.5rem 0;
   background: transparent;
-  position: relative; /* 为 sticky 提供定位上下文 */
+  position: relative;    /* 作为编号绝对定位的包含块（containing block） */
 }
 
-/* 公式编号固定在右侧，公式内容可横向滚动 */
+/*
+ * 将横向滚动下沉到 .katex 层，让 .katex-display 仅作为编号的定位锚点。
+ * 同时移除 .katex 和 .katex-html 的 position: relative（KaTeX 默认设置），
+ * 使编号的 containing block 上移到 .katex-display，这样编号就不会随公式滚动。
+ */
+.katex-display > .katex {
+  position: static !important;
+  overflow-x: auto;
+}
+.katex-display > .katex > .katex-html {
+  position: static !important;
+}
+
+/* 公式编号 — 透明白色圆角玻璃胶囊，绝对定位于最右侧，不随公式横向滚动 */
 /* 兼容不同 KaTeX 渲染器生成的编号类名 */
 .katex-display .katex-tag,
 .katex-display .katex-display-tag,
 .katex-display .eqno,
 .katex-display .tag {
-  position: sticky !important;
-  right: 0;
+  position: absolute !important;
+  right: 0.25em;
   z-index: 1;
-  float: none !important; /* 覆盖某些渲染器的 float: right */
   display: inline-block;
 
-  /* 透明白色圆角玻璃胶囊 */
-  background: rgba(255, 255, 255, 0.5);
+  /* 玻璃胶囊 */
+  background: rgba(251, 252, 251, 0.72);
   backdrop-filter: saturate(1.8) blur(10px);
   -webkit-backdrop-filter: saturate(1.8) blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 9999px;
   padding: 0.15em 0.65em;
-  margin-left: 0.5em;
   color: var(--color-text-muted);
   font-size: 0.85em;
   box-shadow:
@@ -181,11 +192,11 @@ body::after {
     0 1px 3px rgba(28, 33, 32, 0.05);
 }
 
-/* 隐藏滚动条但保持滚动功能（可选，让界面更干净） */
-.katex-display::-webkit-scrollbar {
+/* 滚动条下移到 .katex 层 */
+.katex-display > .katex::-webkit-scrollbar {
   height: 4px;
 }
-.katex-display::-webkit-scrollbar-thumb {
+.katex-display > .katex::-webkit-scrollbar-thumb {
   background: rgba(74, 124, 116, 0.2);
   border-radius: 2px;
 }
