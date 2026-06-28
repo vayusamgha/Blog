@@ -148,7 +148,7 @@ body::after {
 .katex-display {
   overflow-x: visible;   /* 不在这一层滚动，让内部 .katex 滚动 */
   overflow-y: hidden;
-  padding: 0.75em 0;
+  padding: 0.75em 3.5em 0.75em 0;  /* 右侧预留标签胶囊的空间 */
   margin: 1.5rem 0;
   background: transparent;
   position: relative;    /* 作为编号绝对定位的包含块（containing block） */
@@ -175,7 +175,7 @@ body::after {
 .katex-display .eqno,
 .katex-display .tag {
   position: absolute !important;
-  right: 0.25em;
+  right: 0.5em;
   z-index: 1;
   display: inline-block;
 
