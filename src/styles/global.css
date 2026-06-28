@@ -162,6 +162,7 @@ body::after {
 .katex-display > .katex {
   position: static !important;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 .katex-display > .katex > .katex-html {
   position: static !important;
@@ -177,9 +178,6 @@ body::after {
   right: 0.25em;
   z-index: 1;
   display: inline-block;
-  line-height: 1.2;
-  height: auto !important;
-  overflow: hidden !important;
 
   /* 玻璃胶囊 */
   background: rgba(251, 252, 251, 0.72);
@@ -193,18 +191,6 @@ body::after {
   box-shadow:
     inset 0 0.5px 0 rgba(255, 255, 255, 0.6),
     0 1px 3px rgba(28, 33, 32, 0.05);
-}
-
-/* 消除 KaTeX 内部 vlist 结构对标签高度的拉伸 */
-.katex-display .katex-tag .vlist,
-.katex-display .katex-tag .vlist-t,
-.katex-display .katex-tag .vlist-t2,
-.katex-display .katex-tag .vlist-r,
-.katex-display .tag .vlist,
-.katex-display .tag .vlist-t,
-.katex-display .tag .vlist-t2,
-.katex-display .tag .vlist-r {
-  height: auto !important;
 }
 
 /* 滚动条下移到 .katex 层 */
